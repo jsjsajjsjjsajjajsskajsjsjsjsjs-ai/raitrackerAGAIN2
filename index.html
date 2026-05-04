@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Profile Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      text-align: center;
+      padding: 40px;
+    }
+    .card {
+      background: #1e293b;
+      padding: 20px;
+      margin: 20px auto;
+      border-radius: 12px;
+      width: 300px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    }
+    img {
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+    }
+    .status {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>My Profile</h1>
+
+  <!-- Discord Section -->
+
+  <div class="card">
+    <h2>Discord</h2>
+    <img id="discord-avatar" src="" alt="Discord Avatar">
+    <div class="status" id="discord-status">Loading...</div>
+    <div id="discord-custom"></div>
+  </div>
+
+  <!-- Roblox Section -->
+
+  <div class="card">
+    <h2>Roblox</h2>
+    <img id="roblox-avatar" src="" alt="Roblox Avatar">
+    <p><a href="https://www.roblox.com/users/4847762906/profile" target="_blank" style="color: #38bdf8;">View Profile</a></p>
+  </div>
+
+<script>
+// ===== DISCORD (LANYARD API) =====
+const discordId = "YOUR_DISCORD_USER_ID";
+
+fetch(`https://api.lanyard.rest/v1/users/${discordId}`)
+  .then(res => res.json())
+  .then(data => {
+    const d = data.data;
+
+    // Avatar
+    const avatar = `https://cdn.discordapp.com/avatars/${discordId}/${d.discord_user.avatar}.png`;
+    document.getElementById("discord-avatar").src = avatar;
+
+    // Status (online/dnd/idle/offline)
+    document.getElementById("discord-status").innerText = "Status: " + d.discord_status;
+
+    // Custom status (thought bubble)
+    if (d.activities.length > 0) {
+      const custom = d.activities.find(a => a.type === 4);
+      if (custom) {
+        document.getElementById("discord-custom").innerText = custom.state;
+      }
+    }
+  });
+
+// ===== ROBLOX AVATAR =====
+const robloxUserId = 4847762906;
+
+fetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${robloxUserId}&size=150x150&format=Png`)
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("roblox-avatar").src = data.data[0].imageUrl;
+  });
+</script>
+
+</body>
+</html>
